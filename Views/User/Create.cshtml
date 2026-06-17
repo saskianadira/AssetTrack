@@ -1,0 +1,110 @@
+﻿@model AssetTrack.Models.User
+
+@{
+    ViewData["Title"] = "Tambah User";
+}
+
+<h2 class="mb-4 fw-bold">
+    Tambah User
+</h2>
+
+<div class="card shadow-sm border-0 rounded-4 p-4">
+
+    <form asp-action="Create" method="post">
+
+        <!--NAMA-->
+        <div class="mb-3">
+            <label class="fw-bold mb-2">
+                Nama
+            </label>
+
+            <input asp-for="Nama"
+            class="form-control"
+            placeholder="Masukkan nama... " />
+
+            <span asp-validation-for="Nama"
+            class="text-danger">
+            </span>
+        </div>
+
+        <!--USERNAME-->
+        <div class="mb-3">
+            <label class="fw-bold mb-2">
+                Username
+            </label>
+
+            <input asp-for="Username"
+            class="form-control"
+            placeholder="Masukkan username... " />
+
+            <span asp-validation-for="Username"
+            class="text-danger">
+            </span>
+        </div>
+
+        <!--PASSWORD-->
+        <div class="mb-3">
+            <label class="fw-bold mb-2">
+                Password
+            </label>
+
+            <input asp-for="Password"
+            type="password"
+            class="form-control"
+            placeholder="Masukkan password..." />
+
+            <span asp-validation-for="Password"
+            class="text-danger">
+            </span>
+        </div>
+
+        <!--ROLE-->
+        <div class="mb-4">
+            <label class="fw-bold mb-2">
+                Role
+            </label>
+
+            <select asp-for="Role"
+            class="form-select">
+
+                <option value="">
+                    Pilih Role
+                </option>
+
+                <option value="Admin">
+                    Admin
+                </option>
+
+                <option value="User">
+                    User
+                </option>
+            </select>
+
+            <span asp-validation-for="Role"
+            class="text-danger">
+            </span>
+        </div>
+
+        <!--BUTTON-->
+        <div class="d-flex gap-2">
+
+            <button type="submit"
+            class="btn btn-success rounded-3 px-4">
+                Simpan
+            </button>
+
+            <a asp-action="Index"
+            class="btn btn-secondary rounded-3 px-4">
+                Kembali
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

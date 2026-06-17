@@ -1,0 +1,141 @@
+﻿@model List<AssetTrack.Models.Peminjaman>
+
+@{
+    ViewData["Title"] = "Data Peminjaman Admin";
+}
+
+<h2 class="mb-4">Data Peminjaman Admin</h2>
+
+<div class="card shadow-sm border-0 rounded-4 p-4">
+
+    <form method="get" class="row g-3 mb-4">
+
+        <!--SEARCH-->
+        <div class="col-md-4">
+
+            <input type="text"
+                name="search"
+                class="form-control"
+                placeholder="Cari nama peminjam..."
+                value="@Context.Request.Query["search"]" />
+        </div>
+        
+    </form>
+
+    <table class="table table-hover align-middle">
+
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama Peminjam</th>
+                <th>Asset</th>
+                <th>Jumlah</th>
+                <th>Tanggal Pinjam</th>
+                <th>Tanggal Kembali</th>
+                <th>
+                    <div class="dropdown">
+
+                        <button class="btn btn-sm dropdown-toggle fw-bold p-0 border-0 bg-transparant"
+                            type="button"
+                            data-bs-toggle="dropdown">
+                            Status
+                        </button>
+
+                        <div class="dropdown-menu p-3">
+
+                            <form method="get">
+
+                                <!-- SEARCH -->
+                                <input type="hidden"
+                                       name="search"
+                                       value="@Context.Request.Query["search"]" />
+
+                                <!-- PENDING -->
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="status"
+                                           value="Pending"
+                                           @(Context.Request.Query["status"].Contains("Pending") ? "checked" : "") />
+
+                                    <label class="form-check-label">
+                                        Pending
+                                    </label>
+                                </div>
+
+                                <!-- DISETUJUI -->
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="status"
+                                           value="Disetujui"
+                                           @(Context.Request.Query["status"].Contains("Disetujui") ? "checked" : "") />
+
+                                    <label class="form-check-label">
+                                        Disetujui
+                                    </label>
+                                </div>
+
+                                <!-- DITOLAK -->
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="status"
+                                           value="Ditolak"
+                                           @(Context.Request.Query["status"].Contains("Ditolak") ? "checked" : "") />
+
+                                    <label class="form-check-label">
+                                        Ditolak
+                                    </label>
+                                </div>
+
+                                <button type="submit"
+                                        class="btn btn-dark btn-sm mt-2 w-100">
+                                    Filter
+                                </button>
+
+                            </form>
+                        </div>
+
+                    </div>
+                </th>
+
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @{
+                int no = 1;
+            }
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@no</td>
+                    <td>@item.NamaPeminjam</td>
+                    <td>@item.Asset.NamaAsset</td>
+                    <td>@item.JumlahPinjam</td>
+                    <td>@item.TanggalPinjam.ToShortDateString()</td>
+                    <td>@item.TanggalKembali.ToShortDateString()</td>
+                    <td>@item.Status</td>
+                    <td>
+                        <a asp-controller="PeminjamanAdmin"
+                            asp-action="Detail"
+                            asp-route-id="@item.Id"
+                            class="btn btn-dark btn-sm">
+                            Detail
+                        </a>
+                    </td>
+                </tr>
+
+                no++;
+
+            }
+
+        </tbody>
+
+    </table>
+
+</div>

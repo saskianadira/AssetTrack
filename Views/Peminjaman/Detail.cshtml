@@ -1,0 +1,126 @@
+﻿@model AssetTrack.Models.Peminjaman
+
+@{
+    ViewData["Title"] = "Detail Peminjaman";
+}
+
+<div class="card shadow-sm border-0 rounded-4 p-4">
+
+    <h3 class="fw-bold mb-4">
+        Detail Peminjaman
+    </h3>
+
+    <div class="row g-3">
+
+        <div class="col-lg-6 mb-3">
+            <label class="form-label fw-bold">
+                Nama Peminjam
+            </label>
+
+            <input type="text"
+            class="form-control"
+            value="@Model.NamaPeminjam"
+            disabled />
+        </div>
+
+        <div class="col-lg-6 mb-3">
+            <label class="form-label fw-bold">
+                Asset
+            </label>
+
+            <input type="text"
+            class="form-control"
+            value="@Model.Asset.NamaAsset"
+            disabled />
+        </div>
+
+        <div class="col-lg-6 mb-3">
+            <label class="form-label fw-bold">
+                Jumlah Pinjam
+            </label>
+
+            <input type="text"
+            class="form-control"
+            value="@Model.JumlahPinjam"
+            disabled />
+        </div>
+
+        <div class="col-lg-6 mb-3">
+            <label class="form-label fw-bold">
+                Status
+            </label>
+
+            <input type="text"
+            class="form-control"
+            value="@Model.Status"
+            disabled />
+        </div>
+
+        <div class="col-lg-6 mb-3">
+            <label class="form-label fw-bold">
+                Tanggal Pinjam
+            </label>
+
+            <input type="text"
+            class="form-control"
+            value="@Model.TanggalPinjam.ToShortDateString()"
+            disabled />
+        </div>
+
+        <div class="col-lg-6 mb-3">
+            <label class="form-label fw-bold">
+                Tanggal Kembali
+            </label>
+
+            <input type="text"
+            class="form-control"
+            value="@Model.TanggalKembali.ToShortDateString()"
+            daisabled />
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">
+                Lokasi
+            </label>
+
+            <input type="text"
+            class="form-control"
+            value="@Model.Lokasi"
+            disabled />
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">
+                Deskripsi
+            </label>
+
+            <textarea class="form-control"
+            rows="4"
+            disabled>@Model.Deskripsi</textarea>
+        </div>
+
+        <hr class="border-2 my-4" />
+
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <div class="mb-3">
+                <label class="form-label fw-bold">
+                    Catatan Admin
+                </label>
+
+                <textarea class="form-control"
+                    rows="4"
+                    disabled>@Model.Notes</textarea>
+            </div>
+        }
+
+        <div class="mt-4 d-flex justify-content-end">
+            <a asp-action="Index"
+                class="btn btn-secondary">
+                Kembali
+            </a>
+        </div>
+
+    </div>
+
+</div>

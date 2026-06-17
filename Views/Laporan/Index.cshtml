@@ -1,0 +1,308 @@
+﻿@model List<AssetTrack.Models.Peminjaman>
+
+@{
+    ViewData["Title"] = "Laporan";
+}
+
+<h2 class="mb-4 fw-bold">
+    Laporkan Transaksi Asset
+</h2>
+
+<style>
+    .custom-table {
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        width: 100%;
+        table-layout: auto;
+    }
+
+    .custom-tabe th,
+    .custom-table td {
+        padding: 12px 16px !important;
+        vertical-align: middle;
+        word-wrap: break-word;
+        white-space: normal;
+    }
+
+    .custom-table th {
+        white-space: nowrap;
+        border-bottom: none !important;
+    }
+
+    .custom-table tbody tr {
+        border-top: none !important;
+    }
+
+    .custom-table tbody tr td: first-child {
+        border-top-left-radius: 14px;
+        border-bottom-left-radius: 14px;
+    }
+
+    .badge {
+        padding: 8px 12px;
+        font-size: 13px;
+        border-radius: 10px;
+    }
+
+</style>
+
+<div class="card shadow-sm border-0 rounded-4 p-4">
+
+    <form method="get">
+        <div class="row mb-4 justify-content-between align-items-center">
+
+            <!--SEARCH-->
+            <div class="col-md-4">
+                <input type="text"
+                name="search"
+                class="form-control"
+                placeholder="Cari nama peminjam..."
+                value="@Context.Request.Query["search"]" />
+            </div>
+
+            <!--BUTTON EXPERT-->
+            <div class="col-md-2">
+                <a asp-action="ExportExcel"
+                class="btn btn-success w-100">
+                    Export Excel
+                </a>
+            </div>
+
+        </div>
+
+        <!--TABLE-->
+        <div style="overflow-x:auto;">
+            <table class="table align-middle custom-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+
+                        <th>Nama Peminjam</th>
+
+                        <th>Asset</th>
+
+                        <th>Jumlah</th>
+
+                        <th>Tanggal Pinjam</th>
+
+                        <th>Tanggal Kembali</th>
+
+                        <!--STATUS-->
+                        <th>
+                            <div class="dropdown">
+                                <button class="btn btn-sm dropdown-toggle fw-bold"
+                                type="button"
+                                data-bs-toggle="dropdown">
+                                    Status
+                                </button>
+
+                                <ul class="dropdown-menu p-3">
+                                    <li>
+                                        <input type="checkbox"
+                                        name="status"
+                                        value="Disetujui"
+                                        onchange="this.form.submit()"
+
+                                        @(Context.Request.Query["status"]
+                                                                                                                            .Contains("Disetujui") ? "checked" : "") />
+                                        Disetujui
+                                    </li>
+
+                                    <li>
+                                        <input type="checkbox"
+                                        name="status"
+                                        value="Ditolak"
+                                        onchange="this.form.submit()"
+
+                                        @(Context.Request.Query["status"]
+                                                                                                                            .Contains("Ditolak") ? "checked" : "") />
+                                        Ditolak
+                                    </li>
+
+                                    <li>
+                                        <input type="checkbox"
+                                        name="status"
+                                        value="Dikembalikan"
+                                        onchange="this.form.submit()"
+                                        @(Context.Request.Query["status"]
+                                                                                                                         .Contains("Dikembalikan") ? "checked" : "") />
+                                        Dikembalikan
+                                    </li>
+                                </ul>
+                            </div>
+                        </th>
+
+                        <!--KONDISI-->
+                        <th>
+                            <div class="dropdown">
+                                <button class="btn btn-sm dropdown-toggle fw-bold"
+                                type="button"
+                                data-bs-toggle="dropdown">
+                                    Kondisi
+                                </button>
+
+                                <ul class="dropdown-menu p-3">
+                                    <li>
+                                        <input type="checkbox"
+                                        name="kondisi"
+                                        value="Usable"
+                                        onchange="this.form.submit()"
+
+                                        @(Context.Request.Query["kondisi"]
+                                                    .Contains("Usable") ? "checked" : "") />
+                                        Usable
+                                    </li>
+
+                                    <li>
+                                        <input type="checkbox"
+                                        name="kondisi"
+                                        value="Scrap"
+                                        onchange="this.form.submit()"
+
+                                        @(Context.Request.Query["kondisi"]
+                                                    .Contains("Scrap") ? "checked" : "") />
+                                        Scrap
+                                    </li>
+
+                                    <li>
+                                        <input type="checkbox"
+                                        name="kondisi"
+                                        value="Lost"
+                                        onchange="this.form.submit()"
+
+                                        @(Context.Request.Query["kondisi"]
+                                                    .Contains("Lost") ? "checked" : "") />
+
+                                        Lost
+                                    </li>
+                                </ul>
+                            </div>
+                        </th>
+
+                        <th>Lokasi</th>
+
+                        <th>Deskripsi</th>
+
+                        <th>Keterangan</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @{
+                        int no = 1;
+                    }
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <!--NO-->
+                            <td>@no</td>
+
+                            <!--NAMA-->
+                            <td>@item.NamaPeminjam</td>
+
+                            <!--ASSET-->
+                            <td>@item.Asset.NamaAsset</td>
+
+                            <!--JUMLAH-->
+                            <td>@item.JumlahPinjam</td>
+
+                            <!--TANGGAL PINJAM-->
+                            <td>@item.TanggalPinjam.ToString("dd/MM/yyyy")</td>
+
+                            <!--TANGGAL KEMBALI-->
+                            <td>@item.TanggalKembali.ToString("dd/MM/yyyy")</td>
+
+                            <!--STATUS-->
+                            <td>
+                                @if (item.Status == "Disetujui")
+                                {
+                                    <span class="badge bg-success">
+                                        @item.Status
+                                    </span>
+                                }
+
+                                else if (item.Status == "Ditolak")
+                                {
+                                    <span class="badge bg-danger">
+                                        @item.Status
+                                    </span>
+                                }
+
+                                else if (item.Status == "Dikembalikan")
+                                {
+                                    <span class="badge bg-primary">
+                                        @item.Status
+                                    </span>
+                                }
+
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        @item.Status
+                                    </span>
+                                }
+                            </td>
+
+                            <!--KONDISI-->
+                            <td>
+                                @{
+                                    var kondisi = item.KondisiBarang?.Trim().ToLower();
+                                }
+
+                                @if (kondisi == "usable")
+                                {
+                                    <span class="badge bg-success">
+                                        Usable
+                                    </span>
+                                }
+
+                                else if (kondisi == "scrap")
+                                {
+                                    <span class="badge bg-danger">
+                                        Scrap
+                                    </span>
+                                }
+
+                                else if (kondisi == "lost")
+                                {
+                                    <span class="badge bg-danger">
+                                        Lost
+                                    </span>
+                                }
+
+                                else
+                                {
+                                    <span>-</span>
+                                }
+                            </td>
+
+                            <!--LOKASI-->
+                            <td>@item.Lokasi</td>
+
+                            <!--DESKRIPSI-->
+                            <td>@item.Deskripsi</td>
+
+                            <!--KETERANGAN-->
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.KeteranganPengembalian))
+                                {
+                                    @item.KeteranganPengembalian
+                                }
+
+                                else
+                                {
+                                    <span>-</span>
+                                }
+                            </td>
+                        </tr>
+
+                        no++;
+
+                    }
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>

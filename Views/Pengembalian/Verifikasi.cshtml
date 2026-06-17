@@ -1,0 +1,122 @@
+﻿@model AssetTrack.Models.Peminjaman
+
+@{
+    ViewData["Title"] = "Verifikasi Pengembalian";
+}
+
+<h2 class="mb-4">Verifikasi Pengembalian</h2>
+
+<div class="card shadow-sm border-0 rounded-4 p-4">
+    <form asp-action="Verifikasi"
+        method="post">
+    
+    <!--ID-->
+    <input type="hidden"
+        asp-for="Id" />
+
+    <!--NAMA PEMINJAMAN-->
+    <div class="mb-3">
+        <label class="fw-bold mb-2">
+            Nama Peminjam
+        </label>
+
+        <input asp-for="NamaPeminjam"
+            class="form-control"
+            disabled />
+    </div>
+
+    <!--ASSET-->
+    <div class="mb-3">
+        <label class="fw-bold mb-2">
+            Asset
+        </label>
+
+        <input value="@Model.Asset.NamaAsset"
+            class="form-control"
+            disabled />
+    </div>
+
+    <!--JUMLAH-->
+    <div class="mb-3">
+        <label class="fw-bold mb-2">
+            Jumlah
+        </label>
+
+        <input asp-for="JumlahPinjam"
+            class="form-control"
+            disabled />
+    </div>
+
+    <!--KONDISI BARANG-->
+    <div class="mb-3">
+        <label class="fw-bold mb-2">
+            Kondisi Barang
+        </label>
+
+        <select asp-for="KondisiBarang"
+            class="form-select"
+            id="KondisiBarang"
+            required>
+        
+            <option value="">
+                Pilih Kondisi
+            </option>
+
+            <option value="Usable">
+                Usable
+            </option>
+
+            <option value="Scrap">
+                Scrap
+            </option>
+
+            <option value="Lost">
+                Lost
+            </option>
+        </select>
+    </div>
+
+    <!--KETERANGAN KERUSAKAN-->
+    <div class="mb-3 mt-3 d-none"
+        id="KeteranganBox">
+    
+        <label class="fw-bold mb-2">
+            Keterangan
+        </label>
+
+        <textarea asp-for="KeteranganPengembalian"
+            class="form-control"
+               rows="3"
+               placeholder="Masukkan keterangan...">
+        </textarea>
+    </div>
+
+    <!--BUTTON-->
+    <button type="submit"
+        class="btn btn-success">
+        Verifikasi
+    </button>
+
+    <a asp-action="Index"
+        class="btn btn-secondary">
+        Kembali
+    </a>
+
+    </form>
+
+    <script>
+        const KondisiBarang = document.getElementById("KondisiBarang");
+        const KeteranganBox = document.getElementById("KeteranganBox");
+
+        KondisiBarang.addEventListener("change", function () {
+
+            if (this.value === "Scrap" || this.value === "Lost") {
+                KeteranganBox.classList.remove("d-none");
+            }
+            else {
+                KeteranganBox.classList.add("d-none");
+            }
+        });
+    </script>
+
+</div>

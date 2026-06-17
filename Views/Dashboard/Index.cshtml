@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2 class="mb-4 fw-bold">
+    Dashboard
+</h2>
+
+<div class="row g-4">
+    <!--TOTAL ASSET-->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-4 p-4">
+            <h5>Total Asset</h5>
+
+            <h2 class="fw-bold text-primary">
+                @ViewBag.TotalAsset
+            </h2>
+        </div>
+    </div>
+
+    <!--TOTAL STOK-->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-4 p-4">
+            <h5>Total Stok</h5>
+
+            <h2 class="fw-bold text-success">
+                @ViewBag.TotalStok
+            </h2>
+        </div>
+    </div>
+
+    <!--DIPINJAM-->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-4 p-4">
+            <h5>Sedang Dipinjam</h5>
+
+            <h2 class="fw-bold text-warning">
+                @ViewBag.Dipinjam
+            </h2>
+        </div>
+    </div>
+
+    <!--VERIFIKASI PENGEMBALIAN-->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-4 p-4">
+            <h5>Verifikasi</h5>
+
+            <h2 class="fw-bold text-info">
+                @ViewBag.VerifikasiPengembalian
+            </h2>
+        </div>
+    </div>
+
+    <!--SCRAP-->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-4 p-4">
+            <h5>Total Scrap</h5>
+
+            <h2 class="fw-bold text-secondary">
+                @ViewBag.TotalScrap
+            </h2>
+        </div>
+    </div>
+
+    <!--LOST-->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-4 p-4">
+            <h5>Total Lost</h5>
+
+            <h2 class="fw-bold text-danger">
+                @ViewBag.Lost
+            </h2>
+        </div>
+    </div>
+
+</div>

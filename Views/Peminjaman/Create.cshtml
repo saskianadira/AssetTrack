@@ -1,0 +1,86 @@
+﻿@model AssetTrack.Models.Peminjaman
+
+@{
+    ViewData["Title"] = "Pengajuan Peminjaman";
+}
+
+<h2 class="fw-bold mb-4">Pengajuan Peminjaman</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<div class="card shadow-sm border-0 rounded-4 p-4">
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    <form method="post">
+
+        <!-- Asset -->
+        <div class="mb-4">
+            <label class="fw-semibold">Asset</label>
+            <div class="d-flex align-items-center gap-3">
+                <select asp-for="AssetId" id="assetSelect" class="form-control">
+                    <option value="">-- Pilih Asset --</option>
+                    @if (ViewBag.Assets != null)
+                    {
+                        @foreach (var asset in ViewBag.Assets)
+                        {
+                            <option value="@asset.Id" data-foto="@asset.Foto">
+                                @asset.NamaAsset
+                            </option>
+                        }
+                    }
+                </select>
+                <img id="previewFoto"
+                     src=""
+                     width="60"
+                     height="60"
+                     class="rounded shadow-sm d-none"
+                     style="object-fit: cover;" />
+            </div>
+        </div>
+
+        <!-- Jumlah -->
+        <div class="mb-3">
+            <label class="fw-semibold">Jumlah Pinjam</label>
+            <input asp-for="JumlahPinjam" type="number" min="1" value="1" class="form-control" />
+        </div>
+
+        <!-- Grid untuk tanggal -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="fw-semibold">Tanggal Pinjam</label>
+                <input asp-for="TanggalPinjam" type="date" id="tanggalPinjam"
+                       class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="fw-semibold">Tanggal Kembali</label>
+                <input asp-for="TanggalKembali" type="date" id="tanggalKembali"
+                       class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+        </div>
+
+        <!-- Lokasi -->
+        <div class="mb-3">
+            <label class="fw-semibold">Lokasi Penggunaan</label>
+            <input asp-for="Lokasi" class="form-control" />
+        </div>
+
+        <!-- Deskripsi -->
+        <div class="mb-3">
+            <label class="fw-semibold">Deskripsi Keperluan</label>
+            <textarea asp-for="Deskripsi" class="form-control"></textarea>
+        </div>
+
+        <!-- Tombol -->
+        <div class="d-flex gap-2 mt-3 justify-content-end">
+            <button type="submit" class="btn btn-success">Ajukan</button>
+            <a asp-controller="Peminjaman" asp-action="Index" class="btn btn-secondary">Kembali</a>
+        </div>
+
+    </form>
+</div>
