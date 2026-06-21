@@ -1,7 +1,7 @@
 ﻿@model AssetTrack.Models.Asset
 
 @{
-    ViewData["Tittle"] = "Edit Asset";
+    ViewData["Title"] = "Edit Asset";
 }
 
 <h2 class="mb-4">Edit Asset</h2>
@@ -15,16 +15,19 @@
         <div class="mb-3">
             <label>Nama Asset</label>
             <input asp-for="NamaAsset" class="form-control" />
+            <span asp-validation-for="NamaAsset" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
             <label>Kategori</label>
             <input asp-for="Kategori" class="form-control" />
+            <span asp-validation-for="Kategori" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
             <label>Jumlah</label>
             <input asp-for="Jumlah" class="form-control" />
+            <span asp-validation-for="Jumlah" class="text-danger"></span>
         </div>
 
         <!--GANTI FOTO-->
@@ -33,11 +36,11 @@
             <!--FOTO-->
             <div>
                 <img id="previewFoto"
-                     src="/images/@Model.Foto"
-                     width="60"
-                     height="60"
-                     class="rounded shadow-sm"
-                     style="object-fit: cover;" />
+                src="/images/@Model.Foto"
+                width="60"
+                height="60"
+                class="rounded shadow-sm"
+                style="object-fit: cover;" />
             </div>
 
             <!--INPUT FILE -->
@@ -47,21 +50,21 @@
                 </label>
 
                 <input type="file"
-                    name="fotoFile"
-                    id="fotoInput"
-                    class="form-control"
-                    accept=".jpg,.jpeg,.png" />
+                name="fotoFile"
+                id="fotoInput"
+                class="form-control"
+                accept=".jpg,.jpeg,.png" />
             </div>
         </div>
 
-        <button type="submit" class="btn btn-dark">
+        <button type="submit" class="btn btn-success">
             Update
         </button>
 
         <a asp-controller="Asset"
-           asp-action="Index"
-           class="btn btn-secondary">
-           Kembali
+        asp-action="Index"
+        class="btn btn-danger">
+            Kembali
         </a>
 
     </form>
@@ -71,20 +74,26 @@
         const previewFoto = document.getElementById("previewFoto");
 
         fotoInput.addEventListener("change", function () {
-            const file = this.files[0];
+        const file = this.files[0];
 
-            if (file)
-            {
-                const reader = new FileReader();
+        if (file)
+        {
+        const reader = new FileReader();
 
-                reader.onload = function (e)
-                {
-                    previewFoto.src = e.target.result;
-                }
+        reader.onload = function (e)
+        {
+        previewFoto.src = e.target.result;
+        }
 
-                reader.readAsDataURL(file);
-            }
+        reader.readAsDataURL(file);
+        }
         });
     </script>
 
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

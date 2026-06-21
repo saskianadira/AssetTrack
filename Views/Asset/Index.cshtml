@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Asset";
+    var search = Context.Request.Query["search"].ToString();
 }
 
 <h2 class="mb-4">Data Asset</h2>
@@ -12,71 +13,132 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <!-- SEARCH -->
-        <form method="get" class="d-flex" style="width: 300px;">
+        <div class="d-flex" style="width: 300px;">
             <input type="text"
-                   name="search"
-                   class="form-control"
-                   placeholder="Cari asset..."
-                   value="@Context.Request.Query["search"]" />
-        </form>
+                id="searchBox"
+                class="form-control"
+                placeholder="Cari aset..."
+                value="@search" />
+        </div>
 
         <!-- BUTTON TAMBAH -->
         <a href="/Asset/Create"
-           class="btn d-flex align-items-center gap-2"
-           style="background: #198754; color:white; border:none;">
-            <span class="iconify" data-icon="ic:outline-plus"></span>
+            class="btn d-flex align-items-center gap-2"
+            style="background: #198754; color:white; border:none;">
+        <span class="iconify" data-icon="ic:outline-plus"></span>
             Tambah Asset
         </a>
     </div>
 
     <!-- TABLE -->
-    <table class="table table-hover align-middle">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Foto</th>
-                <th>Nama Asset</th>
-                <th>Kategori</th>
-                <th>Jumlah</th>
-                <th width="180">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                int no = 1;
-            }
-            @foreach (var item in Model)
-            {
+    <div id="tableContainer">
+        <table class="table table-hover align-middle">
+            <thead>
                 <tr>
-                    <td>@no</td>
-                    <td>
-                        <img src="~/images/@item.Foto"
-                             width="80"
-                             height="80"
-                             style="object-fit: cover;"
-                             class="rounded" />
-                    </td>
-                    <td>@item.NamaAsset</td>
-                    <td>@item.Kategori</td>
-                    <td>@item.Jumlah</td>
-                    <td>
-                        <a asp-controller="Asset"
-                           asp-action="Edit"
-                           asp-route-id="@item.Id"
-                           class="btn btn-warning btn-sm">
-                            Edit
-                        </a>
-                        <a asp-controller="Asset"
-                           asp-action="Delete"
-                           asp-route-id="@item.Id"
-                           class="btn btn-danger btn-sm"
-                           onclick="return confirm('Yakin ingin menghapus asset ini?');">
-                            Delete
-                        </a>
-                    </td>
+                    <th>No</th>
+                    <th>Foto</th>
+                    <th>Nama Asset</th>
+                    <th>Kategori</th>
+                    <th>Jumlah</th>
+                    <th width="180">Action</th>
                 </tr>
-                no++;
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @{
+                    int no = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@no</td>
+                        <td>
+                            <img src="~/images/@item.Foto"
+                            width="80"
+                            height="80"
+                            style="object-fit: cover;"
+                            class="rounded" />
+                        </td>
+                        <td>@item.NamaAsset</td>
+                        <td>@item.Kategori</td>
+                        <td>@item.Jumlah</td>
+                        <td>
+                            <a asp-controller="Asset"
+                                asp-action="Edit"
+                                asp-route-id="@item.Id"
+                                class="btn btn-warning btn-sm">
+                                    Edit
+                            </a>
+                            <a asp-controller="Asset"
+                                asp-action="Delete"
+                                asp-route-id="@item.Id"
+                                class="btn btn-danger btn-sm btn-delete">
+                                    Delete
+                            </a>
+                        </td>
+                    </tr>
+                    no++;
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // DELETE CONFIRM
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const url = this.href;
+
+                Swal.fire({
+                    title: 'Hapus Asset?',
+                    text: 'Data yang dihapus tidak dapat dikembalikan.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Hapus',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
+
+        // SEARCH (debounce)
+        let timeout = null;
+        const searchBox = document.getElementById("searchBox");
+
+        if (searchBox) {
+            searchBox.addEventListener("keyup", function () {
+                clearTimeout(timeout);
+
+                timeout = setTimeout(() => {
+                    const value = this.value;
+                    window.location.href = `/Asset/Index?search=${encodeURIComponent(value)}`;
+                }, 400);
+            });
+        }
+    });
+</script>
+
+@if (TempData["Success"] != null)
+{
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '@TempData["Success"]',
+            timer: 2000,
+            showConfirmButton: false,
+            timerProgressBar: true
+        });
+    </script>
+}

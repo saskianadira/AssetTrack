@@ -12,6 +12,7 @@ namespace AssetTrack.Models
         [Required(ErrorMessage = "Kategori wajib diisi")]
         public string Kategori { get; set; }
 
+        [Required(ErrorMessage = "Jumlah waSjib diisi")]
         [Range(1, int.MaxValue, ErrorMessage = "Jumlah harus lebih dari 0")]
         public int Jumlah { get; set; }
 

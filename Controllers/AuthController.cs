@@ -26,7 +26,16 @@ namespace AssetTrack.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (string.IsNullOrWhiteSpace(username) ||
+                string.IsNullOrWhiteSpace(password))
+            {
+                TempData["Error"] = "Username dan password wajib diisi";
+                return RedirectToAction("Login");
+            }
+
+            var user = _context.Users
+                .AsEnumerable()
+                .FirstOrDefault(u => u.Username == username);
 
             if (user != null)
             {
@@ -47,7 +56,7 @@ namespace AssetTrack.Controllers
 
             }
 
-            TempData["Error"] = "Username atau password salah!";
+            TempData["Error"] = "Username atau password salah";
             return RedirectToAction("Login");
         }
 

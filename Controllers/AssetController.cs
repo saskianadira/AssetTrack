@@ -15,16 +15,23 @@ namespace AssetTrack.Controllers
         }
 
         // INDEX
-        public IActionResult Index()
+        public IActionResult Index(string search)
         {
             if (HttpContext.Session.GetString("UserRole") != "Admin")
             {
                 return RedirectToAction("Login", "Auth");
             }
 
-            var assets = _context.Assets.ToList();
+            var assets = _context.Assets.AsQueryable();
 
-            return View(assets);
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                assets = assets.Where(a =>
+                a.NamaAsset.Contains(search) ||
+                a.Kategori.Contains(search));
+            }
+
+            return View(assets.ToList());
         }
 
         // CREATE (GET)
@@ -38,6 +45,8 @@ namespace AssetTrack.Controllers
         [HttpPost]
         public IActionResult Create(Asset asset, IFormFile fotoFile)
         {
+            ModelState.Remove("Foto");
+
             if (fotoFile == null)
             {
                 ModelState.AddModelError("Foto", "Foto wajib diupload");
@@ -45,43 +54,32 @@ namespace AssetTrack.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(asset); 
+                return View(asset);
             }
 
-            if (fotoFile != null)
+            string fileName = Guid.NewGuid().ToString()
+                + Path.GetExtension(fotoFile.FileName);
+
+            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+
+            if (!Directory.Exists(folderPath))
             {
-                // membuat nama file random
-                string fileName = Guid.NewGuid().ToString()
-                    + Path.GetExtension(fotoFile.FileName);
-
-                // path folder images
-                string folderPath = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "wwwroot",
-                    "images");
-
-                // jika folder belum ada
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-
-                // path lengkap file
-                string filePath = Path.Combine(folderPath, fileName);
-
-                // simpan file
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    fotoFile.CopyTo(stream);
-                }
-
-                // simpan nama file ke database
-                asset.Foto = fileName;
+                Directory.CreateDirectory(folderPath);
             }
 
-            // simpan asset ke database
+            string filePath = Path.Combine(folderPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                fotoFile.CopyTo(stream);
+            }
+
+            asset.Foto = fileName;
+
             _context.Assets.Add(asset);
             _context.SaveChanges();
+
+            TempData["Success"] = "Aset berhasil ditambahkan";
 
             return RedirectToAction("Index");
         }
@@ -102,13 +100,21 @@ namespace AssetTrack.Controllers
 
         // EDIT (POST)
         [HttpPost]
-        public IActionResult Edit(Asset asset, IFormFile fotoFile)
+        public IActionResult Edit(Asset asset, IFormFile? fotoFile)
         {
+            ModelState.Remove("Foto");
+
             var existingAsset = _context.Assets.Find(asset.Id);
 
             if (existingAsset == null)
             {
                 return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                asset.Foto = existingAsset.Foto;
+                return View(asset);
             }
 
             // update data
@@ -146,6 +152,8 @@ namespace AssetTrack.Controllers
 
             _context.SaveChanges();
 
+            TempData["Success"] = "Asset berhasil diperbarui";
+
             return RedirectToAction("Index");
         }
 
@@ -165,7 +173,7 @@ namespace AssetTrack.Controllers
             {
                 string fotoPath = Path.Combine(
                     Directory.GetCurrentDirectory(),
-                    "wwroot",
+                    "wwwroot",
                     "images",
                     asset.Foto);
 
@@ -178,6 +186,8 @@ namespace AssetTrack.Controllers
             // hapus data dari database
             _context.Assets.Remove(asset);
             _context.SaveChanges();
+
+            TempData["Success"] = "Aset berhasil dihapus";
 
             return RedirectToAction("Index");
         }
