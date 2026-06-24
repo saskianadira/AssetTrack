@@ -34,26 +34,27 @@ namespace AssetTrack.Controllers
             }
 
             var user = _context.Users
-                .AsEnumerable()
                 .FirstOrDefault(u => u.Username == username);
 
-            if (user != null)
+            if (user ==  null)
             {
-                var result = _hasher.VerifyHashedPassword(user, user.Password, password);
+                TempData["Error"] = "Username atau password salah";
+                return RedirectToAction("Login");
+            }
 
-                if (result == PasswordVerificationResult.Success)
-                {
-                    // simpan session
-                    HttpContext.Session.SetString("UserUsername", user.Username);
-                    HttpContext.Session.SetString("UserRole", user.Role);
+            var result = _hasher.VerifyHashedPassword(user, user.Password, password);
 
-                    // redirect berdasarkan role
-                    if (user.Role == "Admin")
-                        return RedirectToAction("Index", "Dashboard");
+            if (result == PasswordVerificationResult.Success)
+            {
+                // simpan session
+                HttpContext.Session.SetString("UserUsername", user.Username);
+                HttpContext.Session.SetString("UserRole", user.Role);
 
-                    return RedirectToAction("Index", "Peminjaman");
-                }
+                // redirect berdasarkan role
+                if (user.Role == "Admin")
+                    return RedirectToAction("Index", "Dashboard");
 
+                return RedirectToAction("Index", "Peminjaman");
             }
 
             TempData["Error"] = "Username atau password salah";

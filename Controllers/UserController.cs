@@ -2,6 +2,7 @@
 using AssetTrack.Data;
 using AssetTrack.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace AssetTrack.Controllers
 {
@@ -32,6 +33,7 @@ namespace AssetTrack.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Create(User user)
         {
@@ -50,13 +52,18 @@ namespace AssetTrack.Controllers
                 ModelState.AddModelError("Username", "Username sudah digunakan");
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(user);
             }
 
+            var hasher = new PasswordHasher<User>();
+            user.Password = hasher.HashPassword(user, user.Password);
+
             _context.Users.Add(user);
             _context.SaveChanges();
+
+            TempData["Success"] = "Data user berhasil ditambahkan";
 
             return RedirectToAction("Index");
         }
@@ -76,15 +83,45 @@ namespace AssetTrack.Controllers
         [HttpPost]
         public IActionResult Edit(User user)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Users.Update(user);
-                _context.SaveChanges();
+            ModelState.Remove("Password");
 
-                return RedirectToAction("Index");
+            var existingUser = _context.Users.Find(user.Id);
+
+            if (existingUser == null)
+            {
+                return NotFound();
             }
 
-            return View(user);
+            // cek username selain dirinya sendiri
+            var usernameExist = _context.Users
+                .FirstOrDefault(u => u.Username == user.Username && u.Id != user.Id);
+
+            if (usernameExist != null)
+            {
+                ModelState.AddModelError("Username", "Username sudah digunakan");
+                return View(user);
+            }
+
+            existingUser.Nama = user.Nama;
+            existingUser.Username = user.Username;
+
+            // Role tetap
+            existingUser.Role = existingUser.Role;
+
+            // Jika password diisi
+            if (!string.IsNullOrWhiteSpace(user.Password))
+            {
+                var hasher = new PasswordHasher<User>();
+
+                existingUser.Password =
+                    hasher.HashPassword(existingUser, user.Password);
+            }
+
+            _context.SaveChanges();
+
+            TempData["Success"] = "Data user berhasil diperbarui";
+
+            return RedirectToAction("Index");
         }
 
         // DELETE
@@ -97,18 +134,10 @@ namespace AssetTrack.Controllers
                 return NotFound();
             }
 
-            return View(user);
-        }
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            var user = _context.Users.Find(id);
+            _context.Users.Remove(user);
+            _context.SaveChanges();
 
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-                _context.SaveChanges();
-            }
+            TempData["Success"] = "Data user berhasil dihapus";
 
             return RedirectToAction("Index");
         }

@@ -16,16 +16,16 @@
         <!-- SEARCH -->
         <form method="get" class="d-flex" style="width: 300px;">
             <input type="text"
-                   name="search"
-                   class="form-control"
-                   placeholder="Cari user..."
-                   value="@Context.Request.Query["search"]" />
+            name="search"
+            class="form-control"
+            placeholder="Cari user..."
+            value="@Context.Request.Query["search"]" />
         </form>
 
         <!-- BUTTON TAMBAH -->
         <a asp-action="Create"
-           class="btn d-flex align-items-center gap-2"
-           style="background:#198754; color:white; border:none;">
+        class="btn d-flex align-items-center gap-2"
+        style="background:#198754; color:white; border:none;">
             <span class="iconify" data-icon="ic:outline-plus"></span>
             Tambah User
         </a>
@@ -66,47 +66,12 @@
                         </td>
                         <td>
                             <a asp-action="Edit"
-                               asp-route-id="@item.Id"
-                               class="btn btn-warning btn-sm">Edit</a>
-                            <button class="btn btn-danger btn-sm"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal-@item.Id">
-                                Hapus
-                            </button>
+                            asp-route-id="@item.Id"
+                            class="btn btn-warning btn-sm">Edit</a>
 
-                            <!-- Modal Delete -->
-                            <div class="modal fade" id="deleteModal-@item.Id" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Konfirmasi Hapus</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-
-                                        <div class="modal-body">
-                                            Yakin ingin menghapus user <b>@item.Nama</b>?
-                                        </div>
-
-                                        <div class="modal-footer">
-
-                                            <form asp-action="Delete" method="post">
-                                                <input type="hidden" name="id" value="@item.Id" />
-
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                    Batal
-                                                </button>
-
-                                                <button type="submit" class="btn btn-danger">
-                                                    Hapus
-                                                </button>
-                                            </form>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
+                            <a asp-action="Delete"
+                            asp-route-id="@item.Id"
+                            class="btn btn-danger btn-sm btn-delete">Hapus</a>
                         </td>
                     </tr>
                     no++;
@@ -121,3 +86,50 @@
         </tbody>
     </table>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.querySelectorAll('.btn-delete').forEach(button => {
+
+        button.addEventListener('click', function (e) {
+
+            e.preventDefault();
+
+            const url = this.href;
+
+            Swal.fire({
+                title: 'Hapus User?',
+                text: 'Data yang dihapus tidak dapat dikembalikan.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+
+            });
+
+        });
+
+    });
+</script>
+
+@if (TempData["Success"] != null)
+{
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '@TempData["Success"]',
+            timer: 2000,
+            showConfirmButton: false,
+            timerProgressBar: true
+        });
+    </script>
+}
