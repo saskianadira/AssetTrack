@@ -16,10 +16,11 @@
         <!-- SEARCH -->
         <form method="get" class="d-flex" style="width: 300px;">
             <input type="text"
-            name="search"
-            class="form-control"
-            placeholder="Cari user..."
-            value="@Context.Request.Query["search"]" />
+                id="searchBox"
+                name="search"
+                class="form-control"
+                placeholder="Cari user..."
+                value="@Context.Request.Query["search"]" />
         </form>
 
         <!-- BUTTON TAMBAH -->
@@ -90,33 +91,46 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    document.querySelectorAll('.btn-delete').forEach(button => {
+    document.addEventListener("DOMContentLoaded", function () {
 
-        button.addEventListener('click', function (e) {
+        // DELETE CONFIRM
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
 
-            e.preventDefault();
+                const url = this.href;
 
-            const url = this.href;
-
-            Swal.fire({
-                title: 'Hapus User?',
-                text: 'Data yang dihapus tidak dapat dikembalikan.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, Hapus',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-
-                if (result.isConfirmed) {
-                    window.location.href = url;
-                }
-
+                Swal.fire({
+                    title: 'Hapus User?',
+                    text: 'Data yang dihapus tidak dapat dikembalikan.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Hapus',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+                });
             });
-
         });
 
+        // SEARCH (debounce)
+        let timeout = null;
+        const searchBox = document.getElementById("searchBox");
+
+        if (searchBox) {
+            searchBox.addEventListener("keyup", function () {
+                clearTimeout(timeout);
+
+                timeout = setTimeout(() => {
+                    const value = this.value;
+                    window.location.href = `/User/Index?search=${encodeURIComponent(value)}`;
+                }, 400);
+            });
+        }
     });
 </script>
 

@@ -16,16 +16,23 @@ namespace AssetTrack.Controllers
         }
 
         // INDEX
-        public IActionResult Index()
+        public IActionResult Index(string search)
         {
             if (HttpContext.Session.GetString("UserRole") != "Admin")
             {
                 return RedirectToAction("Login", "Auth");
             }
 
-            var users = _context.Users.ToList();
+            var users = _context.Users.AsQueryable();
 
-            return View(users);
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                users = users.Where(u =>
+                    u.Nama.Contains(search) ||
+                    u.Username.Contains(search));
+            }
+
+            return View(users.ToList());
         }
 
         //CREATE
