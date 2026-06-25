@@ -72,7 +72,7 @@ namespace AssetTrack.Controllers
             if (data.KondisiBarang == "Usable")
             {
                 // stok kembali
-                pengembalian.Asset.Jumlah += pengembalian.JumlahPinjam;
+                pengembalian.Asset.Jumlah += pengembalian.JumlahPinjam ?? 0;
             }
 
             else if (data.KondisiBarang == "Scrap")

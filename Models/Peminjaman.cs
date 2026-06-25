@@ -8,31 +8,34 @@ namespace AssetTrack.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Nama peminjam wajib diisi")]
-        public string NamaPeminjam { get; set; }
+        public string NamaPeminjam { get; set; } = string.Empty;
 
 
         [Required(ErrorMessage = "Asset wajib dipilih")]
-        public int AssetId { get; set; }
+        public int? AssetId { get; set; }
 
 
         [ForeignKey("AssetId")]
         public Asset? Asset { get; set; }
 
 
-        [Required(ErrorMessage = "JumlahPinjam pinjam wajib diisi")]
-        public int JumlahPinjam { get; set; }
+        [Required(ErrorMessage = "Jumlah Pinjam pinjam wajib diisi")]
+        [Range(1, int.MaxValue, ErrorMessage = "Jumlah pinjam minimal 1")]
+        public int? JumlahPinjam { get; set; }
 
 
         [Required(ErrorMessage = "Tanggal pinjam wajib diisi")]
-        public DateTime TanggalPinjam { get; set; }
+        public DateTime? TanggalPinjam { get; set; }
 
 
         [Required(ErrorMessage = "Tanggal kembali wajib diisi")]
-        public DateTime TanggalKembali { get; set; }
+        public DateTime? TanggalKembali { get; set; }
 
-        public string Lokasi { get; set; }
+        [Required(ErrorMessage = "Lokasi wajib diisi")]
+        public string Lokasi { get; set; } = string.Empty;
 
-        public string Deskripsi { get; set; }
+        [Required(ErrorMessage = "Deskripsi wajib diisi")]
+        public string Deskripsi { get; set; } = string.Empty;
 
         public string Status { get; set; } = "Pending";
 

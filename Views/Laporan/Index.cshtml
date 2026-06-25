@@ -209,10 +209,10 @@
                             <td>@item.JumlahPinjam</td>
 
                             <!--TANGGAL PINJAM-->
-                            <td>@item.TanggalPinjam.ToString("dd/MM/yyyy")</td>
+                            <td>@item.TanggalPinjam?.ToString("dd/MM/yyyy")</td>
 
                             <!--TANGGAL KEMBALI-->
-                            <td>@item.TanggalKembali.ToString("dd/MM/yyyy")</td>
+                            <td>@item.TanggalKembali?.ToString("dd/MM/yyyy")</td>
 
                             <!--STATUS-->
                             <td>

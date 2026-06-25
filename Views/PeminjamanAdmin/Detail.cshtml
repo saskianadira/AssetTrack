@@ -56,7 +56,7 @@
 
                 <input type="text"
                 class="form-control"
-                value="@Model.TanggalPinjam.ToShortDateString()"
+                value="@Model.TanggalPinjam?.ToString("dd/MM/yyyy")"
                 disabled />
             </div>
 
@@ -67,7 +67,7 @@
 
                 <input type="text"
                 class="form-control"
-                value="@Model.TanggalKembali.ToShortDateString()"
+                value="@Model.TanggalKembali?.ToString("dd/MM/yyyy")"
                 disabled />
             </div>
 

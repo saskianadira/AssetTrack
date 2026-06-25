@@ -101,7 +101,7 @@ namespace AssetTrack.Controllers
             peminjaman.Notes = data.Notes;
 
             // KURANGI STOK ASSET
-            peminjaman.Asset.Jumlah -= peminjaman.JumlahPinjam;
+            peminjaman.Asset.Jumlah -= peminjaman.JumlahPinjam ?? 0;
 
             _context.SaveChanges();
 

@@ -117,8 +117,8 @@
                     <td>@item.NamaPeminjam</td>
                     <td>@item.Asset.NamaAsset</td>
                     <td>@item.JumlahPinjam</td>
-                    <td>@item.TanggalPinjam.ToShortDateString()</td>
-                    <td>@item.TanggalKembali.ToShortDateString()</td>
+                    <td>@item.TanggalPinjam?.ToString("dd/MM/yyyy")</td>
+                    <td>@item.TanggalKembali?.ToString("dd/MM/yyyy")</td>
                     <td>@item.Status</td>
                     <td>
                         <a asp-controller="PeminjamanAdmin"

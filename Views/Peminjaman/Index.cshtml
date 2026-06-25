@@ -11,13 +11,13 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <!--SEARCH-->
-        <form method="get" class="d-flex" style="width: 300px;">
+        <div class="d-flex" style="width: 300px;">
             <input type="text"
-                name="search"
+                id="searchBox"
                 class="form-control"
-                placeholder="Cari peminjam atau asset..."
+                placeholder="Cari aset..."
                 value="@Context.Request.Query["search"]" />
-        </form>
+        </div>
 
         <!--BUTTON-->
         <a href="/Peminjaman/Create" 
@@ -35,7 +35,7 @@
             <tr>
                 <th>No</th>
                 <th>Foto</th>
-                <th>Asset</th>
+                <th>Aset</th>
                 <th>Jumlah</th>
                 <th>Tanggal Pinjam</th>
                 <th>Tanggal Kembali</th>
@@ -131,8 +131,8 @@
                     </td>
 
                     <td>@item.JumlahPinjam</td>
-                    <td>@item.TanggalPinjam.ToShortDateString()</td>
-                    <td>@item.TanggalKembali.ToShortDateString()</td>
+                    <td>@item.TanggalPinjam?.ToString("dd/MM/yyyy")</td>
+                    <td>@item.TanggalKembali?.ToString("dd/MM/yyyy")</td>
                     <td>
                         @if (item.Status == "Verifikasi")
                         {
@@ -164,11 +164,10 @@
                         @if (item.Status == "Pending")
                         {
                             <a asp-controller="Peminjaman"
-                            asp-action="Cancel"
-                            asp-route-id="@item.Id"
-                            class="btn btn-danger btn-sm"
-                            onclick="return confirm('Batalkan peminjaman ini?')">
-                                Batalkan
+                                asp-action="Cancel"
+                                asp-route-id="@item.Id"
+                                class="btn btn-danger btn-sm btn-cancel">
+                                    Batalkan
                             </a>
                         }
                         else if (item.Status == "Disetujui")
@@ -209,3 +208,79 @@
     </table>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        let timeout = null;
+        const searchBox = document.getElementById("searchBox");
+
+        if (searchBox) {
+
+            searchBox.addEventListener("keyup", function () {
+
+                clearTimeout(timeout);
+
+                timeout = setTimeout(() => {
+
+                    const value = this.value;
+
+                    const url =
+                        `/Peminjaman/Index?search=${encodeURIComponent(value)}`;
+
+                    window.location.href = url;
+
+                }, 800);
+
+            });
+
+        }
+
+        
+        document.querySelectorAll('.btn-cancel').forEach(button => {
+
+        button.addEventListener('click', function (e) {
+
+            e.preventDefault();
+
+            const url = this.href;
+
+            Swal.fire({
+                title: 'Batalkan Peminjaman?',
+                text: 'Pengajuan peminjaman akan dibatalkan.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Batalkan',
+                cancelButtonText: 'Kembali'
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+
+            });
+
+        });
+
+    });
+
+    });
+</script>
+
+@if (TempData["Success"] != null)
+{
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '@TempData["Success"]',
+            timer: 2000,
+            showConfirmButton: false,
+            timerProgressBar: true
+        });
+    </script>
+}

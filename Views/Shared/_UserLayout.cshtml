@@ -145,6 +145,9 @@
     <div class="main-content p-4">
         @RenderBody()
     </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 
 </html>

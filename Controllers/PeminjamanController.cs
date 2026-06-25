@@ -38,7 +38,7 @@ namespace AssetTrack.Controllers
                 search = search.ToLower();
 
                 peminjaman = peminjaman.Where(p =>
-                    p.NamaPeminjam.ToLower().Contains(search) ||
+                    p.Asset != null &&
                     p.Asset.NamaAsset.ToLower().Contains(search));
             }
 
@@ -88,8 +88,24 @@ namespace AssetTrack.Controllers
                 return View(peminjaman);
             }
 
+            if (peminjaman.TanggalKembali < peminjaman.TanggalPinjam)
+            {
+                ModelState.AddModelError("TanggalKembali", "Tanggal kembali tidak boleh lebih kecil dari tanggal pinjam");
+
+                ViewBag.Assets = _context.Assets.Where(a => a.Jumlah > 0).ToList();
+                return View(peminjaman);
+            }
+
             // CEK STOK
             var asset = _context.Assets.Find(peminjaman.AssetId);
+
+            if (asset == null)
+            {
+                ModelState.AddModelError("AssetId", "Asset tidak ditemukan");
+
+                ViewBag.Assets = _context.Assets.Where(a => a.Jumlah > 0).ToList();
+                return View(peminjaman);
+            }
 
             if (peminjaman.JumlahPinjam > asset.Jumlah)
             {
@@ -106,6 +122,8 @@ namespace AssetTrack.Controllers
             _context.Peminjamans.Add(peminjaman);
             _context.SaveChanges();
 
+            TempData["Success"] = "Pengajuan peminjaman berhasil diajukan";
+
             return RedirectToAction("Index");
         }
 
@@ -121,6 +139,8 @@ namespace AssetTrack.Controllers
 
             _context.Peminjamans.Remove(peminjaman);
             _context.SaveChanges();
+
+            TempData["Success"] = "Pengajuan peminjaman berhasil dibatalkan";
 
             return RedirectToAction("Index");
         }

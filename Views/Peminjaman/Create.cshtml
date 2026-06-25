@@ -6,8 +6,6 @@
 
 <h2 class="fw-bold mb-4">Pengajuan Peminjaman</h2>
 
-<div asp-validation-summary="All" class="text-danger"></div>
-
 <div class="card shadow-sm border-0 rounded-4 p-4">
 
     @if (TempData["Error"] != null)
@@ -22,6 +20,7 @@
         <!-- Asset -->
         <div class="mb-4">
             <label class="fw-semibold">Asset</label>
+
             <div class="d-flex align-items-center gap-3">
                 <select asp-for="AssetId" id="assetSelect" class="form-control">
                     <option value="">-- Pilih Asset --</option>
@@ -36,31 +35,45 @@
                     }
                 </select>
                 <img id="previewFoto"
-                     src=""
-                     width="60"
-                     height="60"
-                     class="rounded shadow-sm d-none"
-                     style="object-fit: cover;" />
+                src=""
+                width="60"
+                height="60"
+                class="rounded shadow-sm d-none"
+                style="object-fit: cover;" />
             </div>
+
+            <span asp-validation-for="AssetId" class="text-danger"></span>
+
         </div>
 
         <!-- Jumlah -->
         <div class="mb-3">
             <label class="fw-semibold">Jumlah Pinjam</label>
-            <input asp-for="JumlahPinjam" type="number" min="1" value="1" class="form-control" />
+
+            <input asp-for="JumlahPinjam" 
+                type="number" 
+                class="form-control" />
+
+            <span asp-validation-for="JumlahPinjam" class="text-danger"></span>
+
         </div>
 
         <!-- Grid untuk tanggal -->
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="fw-semibold">Tanggal Pinjam</label>
+
                 <input asp-for="TanggalPinjam" type="date" id="tanggalPinjam"
-                       class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+
+                <span asp-validation-for="TanggalPinjam" class="text-danger"></span>
             </div>
             <div class="col-md-6 mb-3">
                 <label class="fw-semibold">Tanggal Kembali</label>
                 <input asp-for="TanggalKembali" type="date" id="tanggalKembali"
-                       class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+
+                <span asp-validation-for="TanggalKembali" class="text-danger"></span>
             </div>
         </div>
 
@@ -68,19 +81,47 @@
         <div class="mb-3">
             <label class="fw-semibold">Lokasi Penggunaan</label>
             <input asp-for="Lokasi" class="form-control" />
+
+            <span asp-validation-for="Lokasi" class="text-danger"></span>
         </div>
 
         <!-- Deskripsi -->
         <div class="mb-3">
             <label class="fw-semibold">Deskripsi Keperluan</label>
             <textarea asp-for="Deskripsi" class="form-control"></textarea>
+
+            <span asp-validation-for="Deskripsi" class="text-danger"></span>
         </div>
 
         <!-- Tombol -->
         <div class="d-flex gap-2 mt-3 justify-content-end">
             <button type="submit" class="btn btn-success">Ajukan</button>
-            <a asp-controller="Peminjaman" asp-action="Index" class="btn btn-secondary">Kembali</a>
+            <a asp-controller="Peminjaman" asp-action="Index" class="btn btn-danger">Kembali</a>
         </div>
 
     </form>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+
+        const tanggalPinjam = document.getElementById("tanggalPinjam");
+        const tanggalKembali = document.getElementById("tanggalKembali");
+
+        tanggalPinjam.addEventListener("change", function () {
+
+            console.log("Tanggal pinjam berubah:", this.value);
+
+            tanggalKembali.min = this.value;
+
+            if (tanggalKembali.value < this.value) {
+                tanggalKembali.value = "";
+            }
+        });
+
+    </script>
+}
