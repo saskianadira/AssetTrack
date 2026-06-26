@@ -31,11 +31,20 @@ namespace AssetTrack.Controllers
                 .AsQueryable();
 
             // SEARCH NAMA PEMINJAM
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                peminjaman = peminjaman.Where(p => 
-                    p.NamaPeminjam != null &&
-                    p.NamaPeminjam.ToLower().Contains(search.ToLower()));
+                search = search.ToLower();
+
+                peminjaman = peminjaman.Where(p =>
+                    (p.NamaPeminjam != null &&
+                     p.NamaPeminjam.ToLower().Contains(search))
+
+                    ||
+
+                    (p.Asset != null &&
+                     p.Asset.NamaAsset != null &&
+                     p.Asset.NamaAsset.ToLower().Contains(search))
+                );
             }
 
             //FILTER STATUS
@@ -89,7 +98,7 @@ namespace AssetTrack.Controllers
 
                 _context.SaveChanges();
 
-                TempData["Error"] = "Pengajuan otomatis ditolak karena stok tidak mencukupi.";
+                TempData["Error"] = "Pengajuan ditolak secara otomatis karena stok aset tidak mencukupi.";
 
                 return RedirectToAction("Index");
             }
@@ -104,6 +113,8 @@ namespace AssetTrack.Controllers
             peminjaman.Asset.Jumlah -= peminjaman.JumlahPinjam ?? 0;
 
             _context.SaveChanges();
+
+            TempData["Success"] = "Pengajuan peminjaman berhasil disetujui";
 
             return RedirectToAction("Index");
         }
@@ -123,6 +134,8 @@ namespace AssetTrack.Controllers
             peminjaman.Notes = data.Notes;
 
             _context.SaveChanges();
+
+            TempData["Error"] = "Pengajuan peminjaman telah ditolak";
 
             return RedirectToAction("Index");
         }

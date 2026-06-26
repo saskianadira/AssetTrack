@@ -6,17 +6,24 @@
 
 <h2 class="mb-4">Data Peminjaman Admin</h2>
 
+<style>
+    .badge {
+        padding: 8px 12px;
+        font-size: 13px;
+        border-radius: 10px;
+    }
+</style>
+
 <div class="card shadow-sm border-0 rounded-4 p-4">
 
     <form method="get" class="row g-3 mb-4">
 
         <!--SEARCH-->
         <div class="col-md-4">
-
             <input type="text"
-                name="search"
+                id="searchBox"
                 class="form-control"
-                placeholder="Cari nama peminjam..."
+                placeholder="Cari nama peminjam atau aset..."
                 value="@Context.Request.Query["search"]" />
         </div>
         
@@ -119,7 +126,20 @@
                     <td>@item.JumlahPinjam</td>
                     <td>@item.TanggalPinjam?.ToString("dd/MM/yyyy")</td>
                     <td>@item.TanggalKembali?.ToString("dd/MM/yyyy")</td>
-                    <td>@item.Status</td>
+                    <td>
+                        @if (item.Status == "Pending")
+                        {
+                            <span class="badge bg-warning text-dark">
+                                Pending
+                            </span>
+                        }
+                        else if (item.Status == "Disetujui")
+                        {
+                            <span class="badge bg-success">
+                                Disetujui
+                            </span>
+                        }
+                    </td>
                     <td>
                         <a asp-controller="PeminjamanAdmin"
                             asp-action="Detail"
@@ -139,3 +159,76 @@
     </table>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if (TempData["Success"] != null)
+{
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '@TempData["Success"]',
+            timer: 2000,
+            showConfirmButton: false,
+            timerProgressBar: true
+        });
+    </script>
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // SEARCH (debounce)
+    let timeout = null;
+    const searchBox = document.getElementById("searchBox");
+
+    if (searchBox) {
+        searchBox.addEventListener("keyup", function () {
+
+            clearTimeout(timeout);
+
+            timeout = setTimeout(() => {
+
+                const value = this.value;
+
+                const params = new URLSearchParams(window.location.search);
+
+                if (value.trim() !== "") {
+                    params.set("search", value);
+                } else {
+                    params.delete("search");
+                }
+
+                window.location.href = `/PeminjamanAdmin/Index?${params.toString()}`;
+
+            }, 800);
+        });
+    }
+</script>
+
+@if (TempData["Error"] != null)
+{
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Peminjaman Ditolak',
+            text: '@TempData["Error"]',
+            timer: 2000,
+            showConfirmButton: false,
+            timerProgressBar: true
+        });
+    </script>
+}
+
+@if (TempData["Warning"] != null)
+{
+    <script>
+        Swal.fire({
+            icon: 'warning',
+            title: 'Stok Tidak Mencukupi',
+            text: '@TempData["Warning"]',
+            confirmButtonColor: '#f59e0b'
+        });
+    </script>
+}

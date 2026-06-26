@@ -4,9 +4,7 @@
     ViewData["Title"] = "Laporan";
 }
 
-<h2 class="mb-4 fw-bold">
-    Laporkan Transaksi Asset
-</h2>
+<h2 class="mb-4 fw-bold">Laporkan Transaksi Asset</h2>
 
 <style>
     .custom-table {
@@ -216,7 +214,14 @@
 
                             <!--STATUS-->
                             <td>
-                                @if (item.Status == "Disetujui")
+                                @if (item.Status == "Pending")
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        @item.Status
+                                    </span>
+                                }
+
+                                else if (item.Status == "Disetujui")
                                 {
                                     <span class="badge bg-success">
                                         @item.Status
@@ -230,21 +235,13 @@
                                     </span>
                                 }
 
-                                else if (item.Status == "Dikembalikan")
-                                {
-                                    <span class="badge bg-primary">
-                                        @item.Status
-                                    </span>
-                                }
-
                                 else
                                 {
-                                    <span class="badge bg-warning text-dark">
+                                    <span class="badge bg-secondary">
                                         @item.Status
                                     </span>
                                 }
                             </td>
-
                             <!--KONDISI-->
                             <td>
                                 @{
