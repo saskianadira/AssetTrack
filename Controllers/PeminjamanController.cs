@@ -160,6 +160,8 @@ namespace AssetTrack.Controllers
 
             _context.SaveChanges();
 
+            TempData["Success"] = "Pengajuan pengembalian aset berhasil dikirim.";
+
             return RedirectToAction("Index");
         }
 

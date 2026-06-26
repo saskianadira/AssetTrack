@@ -184,8 +184,7 @@
                             <a asp-controller="Peminjaman"
                             asp-action="Kembalikan"
                             asp-route-id="@item.Id"
-                            class="btn btn-warning btn-sm"
-                            onclick="return confirm('Ajukan pengembalikan barang ini?')">
+                            class="btn btn-warning btn-sm btn-return">
                                 Kembalikan
                             </a>
                         }
@@ -213,7 +212,8 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-
+        
+        @* SEARCH *@
         let timeout = null;
         const searchBox = document.getElementById("searchBox");
 
@@ -238,35 +238,65 @@
 
         }
 
-        
+        @* BATALKAN PEMINJAMAN *@
         document.querySelectorAll('.btn-cancel').forEach(button => {
 
-        button.addEventListener('click', function (e) {
+            button.addEventListener('click', function (e) {
 
-            e.preventDefault();
+                e.preventDefault();
 
-            const url = this.href;
+                const url = this.href;
 
-            Swal.fire({
-                title: 'Batalkan Peminjaman?',
-                text: 'Pengajuan peminjaman akan dibatalkan.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, Batalkan',
-                cancelButtonText: 'Kembali'
-            }).then((result) => {
+                Swal.fire({
+                    title: 'Batalkan Peminjaman?',
+                    text: 'Pengajuan peminjaman akan dibatalkan.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Batalkan',
+                    cancelButtonText: 'Kembali'
+                }).then((result) => {
 
-                if (result.isConfirmed) {
-                    window.location.href = url;
-                }
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+
+                });
 
             });
 
         });
 
-    });
+        @* // KEMBALIKAN ASET *@
+        document.querySelectorAll('.btn-return').forEach(button => {
+
+            button.addEventListener('click', function (e) {
+
+                e.preventDefault();
+
+                const url = this.href;
+
+                Swal.fire({
+                    title: 'Kembalikan Aset?',
+                    text: 'Pengajuan pengembalian aset akan dikirim kepada admin untuk diverifikasi.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#f59e0b',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Kembalikan',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        window.location.href = url;
+                    }
+
+                });
+
+            });
+
+        });
 
     });
 </script>
