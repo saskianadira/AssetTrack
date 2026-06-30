@@ -8,11 +8,18 @@
 
 <div class="card shadow-sm border-0 rounded-4 p-4">
     <form asp-action="Verifikasi"
-        method="post">
+        method="post"
+        id="formVerifikasi">
     
     <!--ID-->
-    <input type="hidden"
-        asp-for="Id" />
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="AssetId" />
+    <input type="hidden" asp-for="NamaPeminjam" />
+    <input type="hidden" asp-for="JumlahPinjam" />
+    <input type="hidden" asp-for="TanggalPinjam" />
+    <input type="hidden" asp-for="TanggalKembali" />
+    <input type="hidden" asp-for="Lokasi" />
+    <input type="hidden" asp-for="Deskripsi" />
 
     <!--NAMA PEMINJAMAN-->
     <div class="mb-3">
@@ -55,8 +62,7 @@
 
         <select asp-for="KondisiBarang"
             class="form-select"
-            id="KondisiBarang"
-            required>
+            id="KondisiBarang">
         
             <option value="">
                 Pilih Kondisi
@@ -74,6 +80,8 @@
                 Lost
             </option>
         </select>
+
+            <span asp-validation-for="KondisiBarang" class="text-danger"></span>
     </div>
 
     <!--KETERANGAN KERUSAKAN-->
@@ -87,13 +95,16 @@
         <textarea asp-for="KeteranganPengembalian"
             class="form-control"
                rows="3"
-               placeholder="Masukkan keterangan...">
-        </textarea>
+               placeholder="Masukkan keterangan..."></textarea>
+
+        <span asp-validation-for="KeteranganPengembalian"
+            class="text-danger"></span>
     </div>
 
     <!--BUTTON-->
     <button type="submit"
-        class="btn btn-success">
+        class="btn btn-success"
+        id="btnVerifikasi">
         Verifikasi
     </button>
 
@@ -104,19 +115,99 @@
 
     </form>
 
-    <script>
-        const KondisiBarang = document.getElementById("KondisiBarang");
-        const KeteranganBox = document.getElementById("KeteranganBox");
+</div>
 
-        KondisiBarang.addEventListener("change", function () {
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // KONDISI BARANG
+        const kondisiBarang = document.getElementById("KondisiBarang");
+        const keteranganBox = document.getElementById("KeteranganBox");
+        const keterangan = document.querySelector("textarea[name='KeteranganPengembalian']");
+
+        kondisiBarang.addEventListener("change", function () {
 
             if (this.value === "Scrap" || this.value === "Lost") {
-                KeteranganBox.classList.remove("d-none");
+                keteranganBox.classList.remove("d-none");
+            } else {
+                keteranganBox.classList.add("d-none");
             }
-            else {
-                KeteranganBox.classList.add("d-none");
-            }
-        });
-    </script>
 
-</div>
+        });
+
+        // VERIFIKASI
+        const form = document.getElementById("formVerifikasi");
+        const btnVerifikasi = document.getElementById("btnVerifikasi");
+
+        btnVerifikasi.addEventListener("click", function (e) {
+
+            e.preventDefault();
+
+            // CEK APAKAH KONDISI SUDAH DIPILIH
+            if (kondisiBarang.value === "") {
+
+                const spanError = document.querySelector("[data-valmsg-for='KondisiBarang']");
+
+                if (spanError) {
+                    spanError.textContent = "Kondisi barang wajib dipilih";
+                }
+
+                kondisiBarang.focus();
+                return;
+            }
+
+            // VALIDASI KETERANGAN
+            const spanKet = document.querySelector("[data-valmsg-for='KeteranganPengembalian']");
+
+            if ((kondisiBarang.value === "Scrap" || kondisiBarang.value === "Lost")
+                && keterangan.value.trim() === "") {
+
+                if (spanKet) {
+                    spanKet.textContent = "Keterangan wajib diisi";
+                }
+
+                keterangan.focus();
+                return;
+            }
+
+            // HAPUS ERROR KETERANGAN
+            if (spanKet) {
+                spanKet.textContent = "";
+            }
+
+            // HAPUS PESAN ERROR
+            const spanError = document.querySelector("[data-valmsg-for='KondisiBarang']");
+
+            if (spanError) {
+                spanError.textContent = "";
+            }
+
+            Swal.fire({
+                title: 'Verifikasi Pengembalian?',
+                text: 'Pastikan kondisi barang yang dipilih sudah benar.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#198754',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Verifikasi',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+
+            });
+
+        });
+    });
+</script>
+
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

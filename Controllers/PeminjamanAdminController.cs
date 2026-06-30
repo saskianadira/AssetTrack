@@ -50,11 +50,13 @@ namespace AssetTrack.Controllers
             //FILTER STATUS
             if (status != null && status.Any())
             {
-                peminjaman = peminjaman.Where(p => 
+                peminjaman = peminjaman.Where(p =>
                     status.Contains(p.Status));
             }
 
             // URUTAN TERBARU
+            var sql = peminjaman.ToQueryString();
+
             var result = peminjaman
                 .OrderByDescending(p => p.Id)
                 .ToList();

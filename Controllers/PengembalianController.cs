@@ -13,7 +13,6 @@ namespace AssetTrack.Controllers
             _context = context;
         }
 
-        // INDEX
         public IActionResult Index()
         {
             if (HttpContext.Session.GetString("UserRole") != "Admin")
@@ -50,6 +49,23 @@ namespace AssetTrack.Controllers
         [HttpPost]
         public IActionResult Verifikasi(AssetTrack.Models.Peminjaman data)
         {
+            // VALIDASI KONDISI BARANG
+            if (string.IsNullOrWhiteSpace(data.KondisiBarang))
+            {
+                ModelState.AddModelError("KondisiBarang", "Kondisi barang wajib dipilih");
+
+                data.Asset = _context.Assets.FirstOrDefault(a => a.Id == data.AssetId);
+
+                return View(data);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                data.Asset = _context.Assets.FirstOrDefault(a => a.Id == data.AssetId);
+
+                return View(data);
+            }
+
             var pengembalian = _context.Peminjamans
                 .Include(p => p.Asset)
                 .FirstOrDefault(p => p.Id == data.Id);
@@ -63,29 +79,20 @@ namespace AssetTrack.Controllers
             pengembalian.Status = "Dikembalikan";
 
             // SIMPAN KONDISI BARANG
-            pengembalian.KondisiBarang = data.KondisiBarang?.Trim();
+            pengembalian.KondisiBarang = data.KondisiBarang.Trim();
 
-            // SIMPAN KETERANGAN PENGEMBALIAN
+            // SIMPAN KETERANGAN
             pengembalian.KeteranganPengembalian = data.KeteranganPengembalian;
 
             // LOGIC KONDISI BARANG
             if (data.KondisiBarang == "Usable")
             {
-                // stok kembali
-                pengembalian.Asset.Jumlah += pengembalian.JumlahPinjam ?? 0;
+                pengembalian.Asset!.Jumlah += pengembalian.JumlahPinjam ?? 0;
             }
 
-            else if (data.KondisiBarang == "Scrap")
-            {
-                // stok tidak kembali
-            }
+            _context.SaveChanges();
 
-            else if (data.KondisiBarang == "Lost")
-            {
-                // stok tidak kembali
-            }
-
-                _context.SaveChanges();
+            TempData["Success"] = "Pengembalian berhasil diverifikasi";
 
             return RedirectToAction("Index");
         }

@@ -122,7 +122,7 @@
                 <tr>
                     <td>@no</td>
                     <td>@item.NamaPeminjam</td>
-                    <td>@item.Asset.NamaAsset</td>
+                    <td>@(item.Asset?.NamaAsset ?? "Asset tidak ditemukan")</td>
                     <td>@item.JumlahPinjam</td>
                     <td>@item.TanggalPinjam?.ToString("dd/MM/yyyy")</td>
                     <td>@item.TanggalKembali?.ToString("dd/MM/yyyy")</td>
